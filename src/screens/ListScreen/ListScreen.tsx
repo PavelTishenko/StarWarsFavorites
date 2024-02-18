@@ -69,8 +69,6 @@ const ListScreen = () => {
 
   const handleItemPress = useCallback(
     (item: Person) => {
-      // navigate to details
-      console.log(item);
       navigation.navigate(Screens.DETAILS, { name: item.name });
     },
     [navigation],

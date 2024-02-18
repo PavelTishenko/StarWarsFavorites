@@ -2,7 +2,7 @@ type Film = string;
 type Vehicle = string;
 type Starship = string;
 
-type Person = {
+export type Person = {
   name: string;
   height: string;
   mass: string;
@@ -19,7 +19,7 @@ type Person = {
   created: string;
   edited: string;
   url: string;
-};
+} & { favorite?: boolean };
 
 export type Response = {
   count: number;

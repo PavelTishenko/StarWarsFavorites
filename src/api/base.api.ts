@@ -40,14 +40,30 @@ export const baseAPI = createApi({
   tagTypes: ['GET'],
   baseQuery: baseQueryWithInterceptor,
   endpoints: builder => ({
-    getCharacters: builder.query<Response[], any>({
-      query: () => {
+    getCharacters: builder.query<Response, { page: number }>({
+      query: arg => {
+        const { page } = arg;
+
         return {
           url: 'people',
+          params: { page: page },
+        };
+      },
+      transformResponse: (response: Response, meta, arg): Response => {
+        const { page } = arg;
+        return {
+          count: response.count,
+          next: response.next,
+          previous: response.previous,
+          results: response.results.map(item => ({
+            ...item,
+            favorite: false,
+            page: page,
+          })),
         };
       },
     }),
   }),
 });
 
-export const { useGetCharactersQuery } = baseAPI;
+export const { useGetCharactersQuery, useLazyGetCharactersQuery } = baseAPI;

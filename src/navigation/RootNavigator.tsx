@@ -38,7 +38,11 @@ const RootNavigator = () => {
         <RootStack.Screen
           name={Screens.DETAILS}
           component={DetailsScreen}
-          options={{ headerTitle: 'Details' }}
+          options={{
+            headerTitle: 'Details',
+            headerBackTitle: 'List',
+            headerTintColor: 'white',
+          }}
         />
       </RootStack.Navigator>
     </NavigationContainer>

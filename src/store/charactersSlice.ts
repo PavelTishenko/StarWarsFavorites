@@ -43,10 +43,26 @@ const charactersSlice = createSlice({
         characters: addedFavorite,
       };
     },
+    reset(state) {
+      const reseted = state.characters.map(item => {
+        if (item.favorite === true) {
+          return {
+            ...item,
+            favorite: false,
+          };
+        }
+        return item;
+      });
+
+      return {
+        ...state,
+        characters: reseted,
+      };
+    },
   },
 });
 
-export const { saveCharacters, updateCharacters, addToFavorite } =
+export const { saveCharacters, updateCharacters, addToFavorite, reset } =
   charactersSlice.actions;
 
 export default charactersSlice.reducer;

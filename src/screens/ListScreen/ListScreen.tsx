@@ -1,19 +1,21 @@
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 import List from '@/components/List';
+import CountBord from '@/components/CountBord';
 
 import { useLazyGetCharactersQuery } from '@/api/base.api';
+import { Person } from '@/api/types.api';
 import {
   addToFavorite,
+  reset,
   saveCharacters,
   selectCharacters,
   updateCharacters,
 } from '@/store/charactersSlice';
-import { Person } from '@/api/types.api';
-import { useNavigation } from '@react-navigation/native';
 import { Screens } from '@/navigation/RootNavigator';
 
 const ListScreen = () => {
@@ -22,10 +24,25 @@ const ListScreen = () => {
   const [page, setPage] = useState(1);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [trigger, { isLoading, isFetching }] = useLazyGetCharactersQuery();
+  const dispatch = useDispatch();
 
   const characters = useSelector(selectCharacters);
 
-  const dispatch = useDispatch();
+  const calculateMaleFavorites = useMemo(() => {
+    return characters.filter(
+      character => character.favorite === true && character.gender === 'male',
+    );
+  }, [characters]);
+  const calculateFemaleFavorites = useMemo(() => {
+    return characters.filter(
+      character => character.favorite === true && character.gender === 'female',
+    );
+  }, [characters]);
+  const calculateNAFavorites = useMemo(() => {
+    return characters.filter(
+      character => character.favorite === true && character.gender === 'n/a',
+    );
+  }, [characters]);
 
   const handleListEndReached = useCallback(async () => {
     try {
@@ -66,6 +83,10 @@ const ListScreen = () => {
     [dispatch],
   );
 
+  const handleResetPress = useCallback(() => {
+    dispatch(reset());
+  }, [dispatch]);
+
   if (isLoading) {
     return (
       <View style={[styles.container, styles.activityIndicatorContainer]}>
@@ -76,6 +97,13 @@ const ListScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View>
+        <CountBord
+          maleCount={calculateMaleFavorites.length}
+          femaleCount={calculateFemaleFavorites.length}
+          naCount={calculateNAFavorites.length}
+        />
+      </View>
       <List
         data={characters}
         isFetching={isFetching}
@@ -85,6 +113,11 @@ const ListScreen = () => {
         onEndReached={handleListEndReached}
         onRefresh={handleOnRefresh}
       />
+      <Pressable
+        style={[styles.resetBtn, { backgroundColor: theme.colors.primary }]}
+        onPress={handleResetPress}>
+        <Text>Reset</Text>
+      </Pressable>
     </View>
   );
 };
@@ -96,6 +129,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   activityIndicatorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resetBtn: {
+    position: 'absolute',
+    right: 25,
+    bottom: 35,
+    height: 43,
+    width: 80,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

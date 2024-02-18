@@ -1,10 +1,14 @@
 import { baseAPI } from '@/api/base.api';
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import charactersSlice from './charactersSlice';
+
+const rootReducer = combineReducers({
+  characters: charactersSlice,
+  [baseAPI.reducerPath]: baseAPI.reducer,
+});
 
 export const store = configureStore({
-  reducer: {
-    [baseAPI.reducerPath]: baseAPI.reducer,
-  },
+  reducer: rootReducer,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(baseAPI.middleware),
 });

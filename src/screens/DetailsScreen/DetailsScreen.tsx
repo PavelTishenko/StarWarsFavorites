@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToFavorite, selectCharacters } from '@/store/charactersSlice';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList, Screens } from '@/navigation/RootNavigator';
 import { ActivityIndicator, Card, useTheme } from 'react-native-paper';
 import moment from 'moment';
+
+import { addToFavorite, selectCharacters } from '@/store/charactersSlice';
 
 const DetailsScreen = () => {
   const { params } = useRoute<RouteProp<RootStackParamList, Screens.DETAILS>>();
@@ -48,15 +49,15 @@ const DetailsScreen = () => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <ActivityIndicator color={theme.colors.primary} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Card style={{ marginTop: 10 }}>
+    <View style={styles.container}>
+      <Card style={styles.card}>
         <Card.Title
           title={character?.name}
           titleVariant="headlineMedium"
@@ -127,6 +128,12 @@ const DetailsScreen = () => {
 export default DetailsScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  card: {
+    marginTop: 10,
+  },
   textContainer: {
     flexDirection: 'row',
     alignItems: 'center',
